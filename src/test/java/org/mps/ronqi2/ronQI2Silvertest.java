@@ -119,7 +119,7 @@ public class RonQI2SilverTest {
     @ParameterizedTest
     @ValueSource(ints = { 4, 5, 10 })
     @DisplayName("Evaluar Apnea Suenyo Correctamente Devuelve True")
-    void EvaluarApneaSuenyo_Correctamente_DevuelveTrue(int numLecturas){
+    void EvaluarApneaSuenyo_MediasSuperiores_DevuelveTrue(int numLecturas){
         // Arrange
         DispositivoSilver ds = mock(DispositivoSilver.class);
         RonQI2Silver rq2s = new RonQI2Silver();
@@ -136,4 +136,23 @@ public class RonQI2SilverTest {
         assertTrue(rq2s.evaluarApneaSuenyo());
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = { 4, 5, 10 })
+    @DisplayName("Evaluar Apnea Suenyo Incorrectamente Devuelve True")
+    void EvaluarApneaSuenyo_MediasInferiores_DevuelveFalse(int numLecturas){
+        // Arrange
+        DispositivoSilver ds = mock(DispositivoSilver.class);
+        RonQI2Silver rq2s = new RonQI2Silver();
+        rq2s.anyadirDispositivo(ds);
+        when(ds.leerSensorPresion()).thenReturn(10.0f);
+        when(ds.leerSensorSonido()).thenReturn(10.0f);
+
+        // Act
+        for (int i = 0; i < numLecturas; i++) {
+            rq2s.obtenerNuevaLectura();
+        }
+        
+        // Assert
+        assertFalse(rq2s.evaluarApneaSuenyo());
+    }
 }
