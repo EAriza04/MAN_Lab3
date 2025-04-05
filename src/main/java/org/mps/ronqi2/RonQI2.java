@@ -33,7 +33,7 @@ public abstract class RonQI2 {
     */
     public boolean reconectar(){
         boolean result = false;
-        if (!disp.estaConectado()){
+        if (!estaConectado()){ // Error 3: No se llamaba al método estaConectado()
             result = disp.conectarSensorPresion() && disp.conectarSensorSonido();
         }
         return result;

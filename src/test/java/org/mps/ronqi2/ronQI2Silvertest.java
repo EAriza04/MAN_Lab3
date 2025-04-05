@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mps.dispositivo.DispositivoSilver;
 
 public class RonQI2SilverTest {
@@ -51,20 +53,22 @@ public class RonQI2SilverTest {
         DispositivoSilver ds = mock(DispositivoSilver.class);
         when(ds.conectarSensorPresion()).thenReturn(true);
         when(ds.configurarSensorPresion()).thenReturn(true);
-        when(ds.conectarSensorSonido()).thenReturn(true);
-        when(ds.configurarSensorSonido()).thenReturn(false);
+        when(ds.conectarSensorSonido()).thenReturn(false);
+        when(ds.configurarSensorSonido()).thenReturn(true);
         RonQI2Silver rq2s = new RonQI2Silver();
         rq2s.anyadirDispositivo(ds);
     
         // Act + Assert
         assertFalse(rq2s.inicializar());
+        verify(ds, times(1)).conectarSensorPresion();
+        verify(ds, times(1)).conectarSensorSonido();
     }
 
     /*
      * Un reconectar, comprueba si el dispositivo desconectado, en ese caso, conecta ambos y devuelve true si ambos han sido conectados. 
      * Genera las pruebas que estimes oportunas para comprobar su correcto funcionamiento. 
      * Centrate en probar si todo va bien, o si no, y si se llama a los métodos que deben ser llamados.
-     */
+    */
 
     @Test
     @DisplayName("Reconectar Dispositivo Correctamente Devuelve True")
@@ -97,17 +101,25 @@ public class RonQI2SilverTest {
         // Act + Assert
         assertFalse(rq2s.reconectar());
         verify(ds, times(1)).conectarSensorPresion();
+        verify(ds, times(0)).conectarSensorSonido();
     }
     
     /*
      * El método evaluarApneaSuenyo, evalua las últimas 5 lecturas realizadas con obtenerNuevaLectura(), 
      * y si ambos sensores superan o son iguales a sus umbrales, que son thresholdP = 20.0f y thresholdS = 30.0f;, 
      * se considera que hay una apnea en proceso. Si hay menos de 5 lecturas también debería realizar la media.
-     */
+    */
      
-    @Test
+    /* Realiza un primer test para ver que funciona bien independientemente del número de lecturas.
+     * Usa el ParameterizedTest para realizar un número de lecturas previas a calcular si hay apnea o no (por ejemplo 4, 5 y 10 lecturas).
+     * https://junit.org/junit5/docs/current/user-guide/index.html#writing-tests-parameterized-tests
+    */
+
+
+    @ParameterizedTest
+    @ValueSource(ints = { 4, 5, 10 })
     @DisplayName("Evaluar Apnea Suenyo Correctamente Devuelve True")
-    void EvaluarApneaSuenyo_Correctamente_DevuelveTrue(){
+    void EvaluarApneaSuenyo_Correctamente_DevuelveTrue(int numLecturas){
         // Arrange
         DispositivoSilver ds = mock(DispositivoSilver.class);
         RonQI2Silver rq2s = new RonQI2Silver();
@@ -116,7 +128,7 @@ public class RonQI2SilverTest {
         when(ds.leerSensorSonido()).thenReturn(35.0f);
 
         // Act
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < numLecturas; i++) {
             rq2s.obtenerNuevaLectura();
         }
         
@@ -124,8 +136,4 @@ public class RonQI2SilverTest {
         assertTrue(rq2s.evaluarApneaSuenyo());
     }
 
-     /* Realiza un primer test para ver que funciona bien independientemente del número de lecturas.
-     * Usa el ParameterizedTest para realizar un número de lecturas previas a calcular si hay apnea o no (por ejemplo 4, 5 y 10 lecturas).
-     * https://junit.org/junit5/docs/current/user-guide/index.html#writing-tests-parameterized-tests
-    */
 }
