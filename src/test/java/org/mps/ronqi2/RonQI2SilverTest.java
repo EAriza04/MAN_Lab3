@@ -53,8 +53,8 @@ public class RonQI2SilverTest {
         DispositivoSilver ds = mock(DispositivoSilver.class);
         when(ds.conectarSensorPresion()).thenReturn(true);
         when(ds.configurarSensorPresion()).thenReturn(true);
-        when(ds.conectarSensorSonido()).thenReturn(false);
-        when(ds.configurarSensorSonido()).thenReturn(true);
+        when(ds.conectarSensorSonido()).thenReturn(true);
+        when(ds.configurarSensorSonido()).thenReturn(false);
         RonQI2Silver rq2s = new RonQI2Silver();
         rq2s.anyadirDispositivo(ds);
     
