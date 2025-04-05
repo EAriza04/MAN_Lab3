@@ -1,5 +1,12 @@
 package org.mps.ronqi2;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mps.dispositivo.*;
 
 public class ronQI2Silvertest {
 
@@ -11,6 +18,22 @@ public class ronQI2Silvertest {
      * debería devolver true. En cualquier otro caso false. Se deja programado un ejemplo.
      */
     
+    @Test
+    @DisplayName("Inicializar Dispositivo Correcto Devuelve True")
+    void Inicializar_DispositivoCorrecto_DevuelveTrue(){
+        // Arrange
+        DispositivoSilver ds = mock(DispositivoSilver.class);
+        when(ds.conectarSensorPresion()).thenReturn(true);
+        when(ds.configurarSensorPresion()).thenReturn(true);
+        when(ds.conectarSensorSonido()).thenReturn(true);
+        when(ds.configurarSensorSonido()).thenReturn(true);
+        RonQI2Silver rq2s = new RonQI2Silver();
+        rq2s.anyadirDispositivo(ds);
+
+        // Act + Assert
+        assertTrue(rq2s.inicializar());
+    }
+
     /*
      * Un inicializar debe configurar ambos sensores, comprueba que cuando se inicializa de forma correcta (el conectar es true), 
      * se llama una sola vez al configurar de cada sensor.
