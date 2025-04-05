@@ -1,3 +1,5 @@
+// Eduardo Ariza Abad y Enrique Ibáñez Rico
+
 package org.mps.ronqi2;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
